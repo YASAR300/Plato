@@ -8,10 +8,14 @@ require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 
+// Sanitize CLIENT_URL (remove trailing slash) to prevent CORS mismatches
+const rawClientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+const clientOrigin = rawClientUrl.endsWith('/') ? rawClientUrl.slice(0, -1) : rawClientUrl;
+
 // Configure Socket.io
 const io = socketIo(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: clientOrigin,
     methods: ["GET", "POST"],
     credentials: true
   }
@@ -31,7 +35,7 @@ module.exports = { io };
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  origin: clientOrigin,
   credentials: true
 }));
 app.use(express.json());
