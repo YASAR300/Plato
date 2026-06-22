@@ -33,7 +33,7 @@ function Navbar() {
   }, [])
 
   return (
-    <header className="sticky top-0 inset-x-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-white/[0.05] transition-all duration-300">
+    <header className="sticky top-0 inset-x-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/[0.05] transition-all duration-300">
       <div className="max-w-[1200px] mx-auto px-5 h-[56px] flex items-center justify-between">
 
         {/* Logo */}
