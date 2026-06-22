@@ -33,7 +33,7 @@ function Navbar() {
   }, [])
 
   return (
-    <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'bg-black/80 backdrop-blur-2xl border-b border-white/[0.05]' : 'bg-transparent'}`}>
+    <header className="sticky top-0 inset-x-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-white/[0.05] transition-all duration-300">
       <div className="max-w-[1200px] mx-auto px-5 h-[56px] flex items-center justify-between">
 
         {/* Logo */}

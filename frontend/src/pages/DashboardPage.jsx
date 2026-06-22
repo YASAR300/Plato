@@ -19,16 +19,19 @@ import {
   BarChart2,
   Users,
   Settings,
-  Sparkles
+  Sparkles,
+  AlertTriangle
 } from 'lucide-react';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [togglingIds, setTogglingIds] = useState({});
   const [isDark, setIsDark] = useState(true);
+  const [toast, setToast] = useState(null);
 
   // Sync dark class on document element
   useEffect(() => {
@@ -40,17 +43,21 @@ const DashboardPage = () => {
   }, [isDark]);
 
   // Fetch initial dishes list
+  const getDishes = async () => {
+    setLoading(true);
+    setFetchError(false);
+    try {
+      const data = await fetchDishes();
+      setDishes(data);
+    } catch (err) {
+      console.error('Error fetching dishes:', err);
+      setFetchError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const getDishes = async () => {
-      try {
-        const data = await fetchDishes();
-        setDishes(data);
-      } catch (err) {
-        console.error('Error fetching dishes:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     getDishes();
   }, []);
 
@@ -83,6 +90,16 @@ const DashboardPage = () => {
       socket.disconnect();
     };
   }, []);
+
+  // Auto-dismiss toast notification
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   // Filter dishes by search query
   const filteredDishes = useMemo(() => {
@@ -119,9 +136,9 @@ const DashboardPage = () => {
     setTogglingIds((prev) => ({ ...prev, [dishId]: true }));
 
     try {
-      await toggleDish(dishId);
-      // Backend emit 'dish:updated' will trigger state refresh,
-      // but optimistic update covers it immediately.
+      const response = await toggleDish(dishId);
+      // Trigger toast message based on backend response status
+      setToast(response.isPublished ? '✅ Dish published' : '🔴 Dish unpublished');
     } catch (err) {
       console.error('Failed to toggle dish:', err);
       // Rollback on failure
@@ -139,11 +156,19 @@ const DashboardPage = () => {
     }
   };
 
+  const isAnyToggling = Object.keys(togglingIds).length > 0;
   const publishedPercent = stats.total > 0 ? Math.round((stats.published / stats.total) * 100) : 0;
 
   return (
     <div className="h-screen overflow-hidden font-sans flex flex-col md:flex-row bg-[#f6f6f6] dark:bg-black text-[#1f2937] dark:text-neutral-200 transition-colors duration-200">
       
+      {/* Toast Notification Container */}
+      {toast && (
+        <div className="fixed bottom-5 right-5 z-[99999] bg-neutral-900 border border-white/[0.08] text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 text-[13px] font-medium transition-all duration-300 animate-slide-up">
+          {toast}
+        </div>
+      )}
+
       {/* ─── SIDEBAR ────────────────────────────────────────────────────────── */}
       <aside className="w-full md:w-[240px] h-auto md:h-full shrink-0 bg-white dark:bg-[#0b0b0b] border-b md:border-b-0 md:border-r border-neutral-200 dark:border-white/[0.08] flex flex-col justify-between p-4.5 overflow-y-auto">
         
@@ -243,7 +268,8 @@ const DashboardPage = () => {
               <div className="w-7 h-7 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 font-bold flex items-center justify-center text-[12px] shrink-0">
                 {user?.email ? user.email[0].toUpperCase() : 'U'}
               </div>
-              <div className="flex flex-col text-left overflow-hidden">
+              {/* Responsive Layout: Hide email metadata block on mobile view */}
+              <div className="hidden md:flex flex-col text-left overflow-hidden">
                 <span className="text-[12px] text-neutral-400 dark:text-neutral-500">Kitchen Staff</span>
                 <span className="text-[12px] font-semibold text-black dark:text-white truncate" title={user?.email}>
                   {user?.email}
@@ -263,7 +289,7 @@ const DashboardPage = () => {
       </aside>
 
       {/* ─── MAIN CONTENT ───────────────────────────────────────────────────── */}
-      <main className="flex-1 p-4 md:p-6 flex flex-col overflow-y-auto max-w-[1400px] mx-auto w-full">
+      <main className="flex-1 h-full p-4 md:p-6 flex flex-col overflow-y-auto max-w-[1400px] mx-auto w-full">
         
         {/* Rounded Inner Box wrapping Dashboard content (Dub-like) */}
         <div className="bg-white dark:bg-[#0c0c0c] border border-neutral-200/80 dark:border-white/[0.08] rounded-2xl p-6 md:p-8 shadow-[0_4px_30px_rgba(0,0,0,0.02)] dark:shadow-[0_24px_60px_rgba(0,0,0,0.6)] flex-1 flex flex-col">
@@ -340,25 +366,56 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          {/* Dish Grid / Loading State / Empty State */}
-          {loading ? (
-            <div className="flex-1 flex flex-col items-center justify-center min-h-[300px] text-neutral-400">
-              <Loader2 className="w-7 h-7 animate-spin text-orange-500 mb-2" />
-              <span className="text-[13.5px]">Fetching dish menu...</span>
+          {/* Core Content Area */}
+          {fetchError ? (
+            /* Error state: Centered alert card with retry action button */
+            <div className="flex-1 flex flex-col items-center justify-center min-h-[300px] text-center p-8 max-w-sm mx-auto">
+              <AlertTriangle className="w-12 h-12 text-orange-500 mb-4" />
+              <h3 className="text-black dark:text-white font-semibold text-[15px] mb-1">
+                Failed to load dishes.
+              </h3>
+              <p className="text-neutral-500 dark:text-neutral-400 text-[13px] mb-5">
+                Please try again.
+              </p>
+              <button
+                onClick={getDishes}
+                className="px-6 py-2 rounded-full bg-orange-500 hover:bg-orange-600 text-black font-semibold text-[13px] transition-colors cursor-pointer"
+              >
+                Retry
+              </button>
             </div>
-          ) : filteredDishes.length === 0 ? (
+          ) : loading ? (
+            /* Loading state: 8 skeleton cards animating */
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="bg-slate-200 dark:bg-slate-700 animate-pulse rounded-2xl h-72" />
+              ))}
+            </div>
+          ) : dishes.length === 0 ? (
+            /* Empty state: No dishes registered */
             <div className="flex-1 flex flex-col items-center justify-center min-h-[300px] text-center border-2 border-dashed border-neutral-100 dark:border-white/[0.03] rounded-2xl p-8">
               <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500 mb-4 mx-auto">
-                <ChefHat size={24} />
+                <UtensilsCrossed size={24} />
               </div>
               <h3 className="text-black dark:text-white font-semibold text-[15px] mb-1">
-                No dishes found
+                No dishes found.
+              </h3>
+            </div>
+          ) : filteredDishes.length === 0 ? (
+            /* Search empty state */
+            <div className="flex-1 flex flex-col items-center justify-center min-h-[300px] text-center border-2 border-dashed border-neutral-100 dark:border-white/[0.03] rounded-2xl p-8">
+              <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500 mb-4 mx-auto">
+                <Search size={24} />
+              </div>
+              <h3 className="text-black dark:text-white font-semibold text-[15px] mb-1">
+                No matching dishes found
               </h3>
               <p className="text-neutral-400 dark:text-neutral-500 text-[13px] max-w-xs mx-auto">
-                {searchQuery ? 'Try adjusting your search query, or clear the search input.' : 'No dishes are loaded in your kitchen yet.'}
+                Try adjusting your search query, or clear the search input.
               </p>
             </div>
           ) : (
+            /* Dish Grid showing dishes list */
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredDishes.map((dish) => {
                 const isToggling = !!togglingIds[dish.dishId];
@@ -375,14 +432,14 @@ const DashboardPage = () => {
                         loading="lazy"
                         className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
                       />
-                      {/* Floating Status Badge */}
+                      {/* Floating Status Badge (with transition effects) */}
                       <div className="absolute top-3 right-3">
                         {dish.isPublished ? (
-                          <span className="bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-bold py-0.5 px-2 rounded-full backdrop-blur-md">
+                          <span className="transition-all duration-300 bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-bold py-0.5 px-2 rounded-full backdrop-blur-md">
                             Published
                           </span>
                         ) : (
-                          <span className="bg-rose-500/15 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 border border-rose-500/20 text-[10px] font-bold py-0.5 px-2 rounded-full backdrop-blur-md">
+                          <span className="transition-all duration-300 bg-rose-500/15 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 border border-rose-500/20 text-[10px] font-bold py-0.5 px-2 rounded-full backdrop-blur-md">
                             Unpublished
                           </span>
                         )}
@@ -400,10 +457,10 @@ const DashboardPage = () => {
                         </p>
                       </div>
 
-                      {/* Action Button */}
+                      {/* Action Button (disabled while any toggle API call is active to avoid conflicts) */}
                       <button
                         onClick={() => handleToggle(dish.dishId)}
-                        disabled={isToggling}
+                        disabled={isAnyToggling}
                         className={`w-full flex items-center justify-center gap-2 py-2 px-3.5 rounded-full text-[12.5px] font-semibold transition-all mt-4 cursor-pointer border select-none ${
                           dish.isPublished
                             ? 'bg-rose-500/10 text-rose-600 border-rose-500/20 hover:bg-rose-500/15 dark:text-rose-400 dark:hover:bg-rose-500/25'
