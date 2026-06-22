@@ -142,10 +142,10 @@ const DashboardPage = () => {
   const publishedPercent = stats.total > 0 ? Math.round((stats.published / stats.total) * 100) : 0;
 
   return (
-    <div className="min-h-screen font-sans flex flex-col md:flex-row bg-[#f6f6f6] dark:bg-black text-[#1f2937] dark:text-neutral-200 transition-colors duration-200">
+    <div className="h-screen overflow-hidden font-sans flex flex-col md:flex-row bg-[#f6f6f6] dark:bg-black text-[#1f2937] dark:text-neutral-200 transition-colors duration-200">
       
       {/* ─── SIDEBAR ────────────────────────────────────────────────────────── */}
-      <aside className="w-full md:w-[240px] shrink-0 bg-white dark:bg-[#0b0b0b] border-b md:border-b-0 md:border-r border-neutral-200 dark:border-white/[0.08] flex flex-col justify-between p-4.5">
+      <aside className="w-full md:w-[240px] h-auto md:h-full shrink-0 bg-white dark:bg-[#0b0b0b] border-b md:border-b-0 md:border-r border-neutral-200 dark:border-white/[0.08] flex flex-col justify-between p-4.5 overflow-y-auto">
         
         <div className="flex flex-col gap-6">
           {/* Brand/Logo */}
