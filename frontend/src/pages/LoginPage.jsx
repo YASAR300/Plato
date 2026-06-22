@@ -69,7 +69,7 @@ const LoginPage = () => {
           <div className="w-[24px] h-[24px] rounded-[6px] bg-orange-500 flex items-center justify-center">
             <ChefHat size={13} className="text-black" strokeWidth={2.5} />
           </div>
-          <span className="text-white text-[16px] font-semibold tracking-tight">DishBoard</span>
+          <span className="text-white text-[16px] font-semibold tracking-tight">Plato</span>
         </Link>
 
         {/* Heading */}

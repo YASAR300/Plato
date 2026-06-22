@@ -178,7 +178,7 @@ const DashboardPage = () => {
             <div className="w-[22px] h-[22px] rounded-[5px] bg-orange-500 flex items-center justify-center">
               <ChefHat size={12} className="text-black" strokeWidth={2.5} />
             </div>
-            <span className="text-black dark:text-white text-[14px] font-semibold tracking-tight">DishBoard</span>
+            <span className="text-black dark:text-white text-[14px] font-semibold tracking-tight">Plato</span>
           </div>
 
           {/* Navigation Items */}

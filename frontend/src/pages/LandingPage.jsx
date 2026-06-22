@@ -41,7 +41,7 @@ function Navbar() {
           <div className="w-[22px] h-[22px] rounded-[5px] bg-orange-500 flex items-center justify-center">
             <ChefHat size={12} className="text-black" strokeWidth={2.5} />
           </div>
-          <span className="text-white text-[14px] font-semibold tracking-tight">DishBoard</span>
+          <span className="text-white text-[14px] font-semibold tracking-tight">Plato</span>
         </Link>
 
         {/* Desktop nav */}
@@ -159,7 +159,7 @@ function Hero() {
             <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
             <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
             <div className="ml-4 flex-1 max-w-[200px] mx-auto h-5 rounded-md bg-white/[0.04] border border-white/[0.06] flex items-center justify-center">
-              <span className="text-neutral-600 text-[10px]">dishboard.app/dashboard</span>
+              <span className="text-neutral-600 text-[10px]">plato.app/dashboard</span>
             </div>
           </div>
           <div className="flex" style={{height:'clamp(280px,35vw,420px)'}}>
@@ -328,7 +328,7 @@ function IntroGrid() {
       id: 'FIG 0.2',
       SVG: StackedLayersSVG,
       title: 'Built for purpose',
-      desc: 'DishBoard is shaped by real kitchen workflows — fast decisions, live menus, and zero friction from order to plate.',
+      desc: 'Plato is shaped by real kitchen workflows — fast decisions, live menus, and zero friction from order to plate.',
     },
     {
       id: 'FIG 0.3',
@@ -353,7 +353,7 @@ function IntroGrid() {
           <span className="text-white">A new kind of dish management tool.</span>
           {' '}
           <span className="text-neutral-500">
-            Purpose-built for restaurant and cloud kitchen operators, DishBoard brings real-time menu control and instant publishing to every screen.
+            Purpose-built for restaurant and cloud kitchen operators, Plato brings real-time menu control and instant publishing to every screen.
           </span>
         </h2>
 
@@ -436,7 +436,7 @@ const IntakeVisual = (
       </div>
       <p className="text-[11px] text-neutral-400 leading-relaxed">"The Saturday night menu keeps going out of stock — Biryani and Butter Chicken are always unavailable by 7pm"</p>
       <div className="mt-2 flex items-center gap-1.5">
-        <div className="text-[10px] text-orange-400 bg-orange-500/10 border border-orange-500/20 rounded px-2 py-0.5">@DishBoard auto-triage this →</div>
+        <div className="text-[10px] text-orange-400 bg-orange-500/10 border border-orange-500/20 rounded px-2 py-0.5">@Plato auto-triage this →</div>
       </div>
     </div>
   </div>
@@ -556,7 +556,7 @@ function Testimonials(){
       <div className="max-w-[1200px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
-            {quote:'"You stop worrying about stale menus the moment you see a dish toggle sync across three open screens in real time. DishBoard just works."',name:'Tariq Hussain',role:'Head of Ops, CloudBite Kitchen',emoji:'🍳'},
+            {quote:'"You stop worrying about stale menus the moment you see a dish toggle sync across three open screens in real time. Plato just works."',name:'Tariq Hussain',role:'Head of Ops, CloudBite Kitchen',emoji:'🍳'},
             {quote:'"We cut our menu update time from 20 minutes of WhatsApp messages to literally one click. Every manager sees it instantly."',name:'Priya Menon',role:'General Manager, Spice Route Group',emoji:'🌶️'},
           ].map(({quote,name,role,emoji})=>(
             <div key={name} className="rounded-2xl border border-white/[0.08] bg-[#0c0c0c] p-8 md:p-10 flex flex-col justify-between min-h-[220px]">
@@ -581,7 +581,7 @@ function StatsStrip(){
   return (
     <section id="pricing" className="border-t border-white/[0.05] py-16 px-5" style={{scrollMarginTop:'70px'}}>
       <div className="max-w-[1200px] mx-auto">
-        <p className="text-center text-[13px] text-neutral-600 mb-8">DishBoard powers menu operations for kitchens across 3 continents. From ambitious startups to major food groups.</p>
+        <p className="text-center text-[13px] text-neutral-600 mb-8">Plato powers menu operations for kitchens across 3 continents. From ambitious startups to major food groups.</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[{v:'8',l:'Dishes seeded on launch'},{v:'3',l:'Real-time events/toggle'},{v:'7d',l:'JWT session expiry'},{v:'< 100ms',l:'Avg API response time'}].map(({v,l})=>(
             <div key={l} className="rounded-xl border border-white/[0.06] bg-[#0b0b0b] p-5 text-center">
@@ -611,7 +611,7 @@ function DocsBlock(){
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-[22px] font-semibold text-white tracking-tight mb-1">API Reference</h2>
-            <p className="text-[13px] text-neutral-600">REST + Socket.io endpoints for DishBoard</p>
+            <p className="text-[13px] text-neutral-600">REST + Socket.io endpoints for Plato</p>
           </div>
           <a href="#" className="flex items-center gap-1 text-[13px] text-neutral-500 hover:text-white transition-colors">Full docs <ArrowRight size={13} /></a>
         </div>
@@ -642,12 +642,12 @@ function Cta(){
         <h2 className="text-[40px] md:text-[60px] font-bold tracking-[-0.04em] leading-[1.08] mb-5" style={{background:'linear-gradient(180deg,#fff 40%,rgba(255,255,255,0.45) 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>
           Built for the future.<br />Available today.
         </h2>
-        <p className="text-neutral-500 text-[15px] leading-relaxed mb-8 max-w-[380px] mx-auto">Join the operators already using DishBoard to run tighter, faster kitchens.</p>
+        <p className="text-neutral-500 text-[15px] leading-relaxed mb-8 max-w-[380px] mx-auto">Join the operators already using Plato to run tighter, faster kitchens.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link to={user ? "/dashboard" : "/signup"} className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white text-black text-[14px] font-semibold hover:bg-neutral-100 transition-colors shadow-xl shadow-white/10">
             {user ? 'Go to Dashboard' : 'Get started'} <ArrowRight size={14} />
           </Link>
-          <a href="mailto:hello@dishboard.app" className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-white/[0.1] text-[14px] text-neutral-400 hover:bg-white/[0.05] hover:text-white transition-colors">
+          <a href="mailto:hello@plato.app" className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-white/[0.1] text-[14px] text-neutral-400 hover:bg-white/[0.05] hover:text-white transition-colors">
             Contact sales
           </a>
         </div>
@@ -673,7 +673,7 @@ function Footer(){
           <div className="shrink-0 w-[160px]">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-[20px] h-[20px] rounded-[4px] bg-orange-500 flex items-center justify-center"><ChefHat size={11} className="text-black" strokeWidth={2.5} /></div>
-              <span className="text-white text-[13px] font-semibold">DishBoard</span>
+              <span className="text-white text-[13px] font-semibold">Plato</span>
             </div>
             <p className="text-[12px] text-neutral-700 leading-relaxed">Menu management for modern kitchens.</p>
           </div>
@@ -689,7 +689,7 @@ function Footer(){
           </div>
         </div>
         <div className="mt-14 pt-5 border-t border-white/[0.04] flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="text-[11.5px] text-neutral-800">© 2025 DishBoard. Built for food operators.</p>
+          <p className="text-[11.5px] text-neutral-800">© 2025 Plato. Built for food operators.</p>
           <div className="flex gap-5">
             {['Privacy','Terms','DPA','AUP'].map(l=>(<a key={l} href="#" className="text-[11.5px] text-neutral-800 hover:text-neutral-500 transition-colors">{l}</a>))}
           </div>
