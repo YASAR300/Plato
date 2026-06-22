@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import {
   ChefHat, ArrowRight, ArrowUpRight, Check,
   Zap, ShieldCheck, ToggleRight, Wifi,
@@ -23,6 +24,7 @@ function scrollTo(id) {
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { user } = useAuth()
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 10)
@@ -57,8 +59,14 @@ function Navbar() {
 
         {/* Auth + mobile toggle */}
         <div className="flex items-center gap-2">
-          <Link to="/login" className="text-[13px] text-neutral-400 hover:text-white transition-colors px-3 py-1.5 hidden md:block">Log in</Link>
-          <Link to="/signup" className="text-[13px] font-medium bg-white text-black px-3.5 py-1.5 rounded-full hover:bg-neutral-100 transition-colors">Sign up</Link>
+          {user ? (
+            <Link to="/dashboard" className="text-[13px] font-medium bg-white text-black px-3.5 py-1.5 rounded-full hover:bg-neutral-100 transition-colors">Dashboard</Link>
+          ) : (
+            <>
+              <Link to="/login" className="text-[13px] text-neutral-400 hover:text-white transition-colors px-3 py-1.5 hidden md:block">Log in</Link>
+              <Link to="/signup" className="text-[13px] font-medium bg-white text-black px-3.5 py-1.5 rounded-full hover:bg-neutral-100 transition-colors">Sign up</Link>
+            </>
+          )}
           {/* Hamburger */}
           <button
             className="md:hidden ml-1 flex flex-col gap-[4px] p-1"
@@ -85,8 +93,14 @@ function Navbar() {
             </button>
           ))}
           <div className="flex gap-3 pt-3">
-            <Link to="/login" onClick={() => setMobileOpen(false)} className="text-[13px] text-neutral-400 hover:text-white transition-colors">Log in</Link>
-            <Link to="/signup" onClick={() => setMobileOpen(false)} className="text-[13px] font-medium bg-white text-black px-4 py-1.5 rounded-full hover:bg-neutral-100 transition-colors">Sign up</Link>
+            {user ? (
+              <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="text-[13px] font-medium bg-white text-black px-4 py-1.5 rounded-full hover:bg-neutral-100 transition-colors">Dashboard</Link>
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setMobileOpen(false)} className="text-[13px] text-neutral-400 hover:text-white transition-colors">Log in</Link>
+                <Link to="/signup" onClick={() => setMobileOpen(false)} className="text-[13px] font-medium bg-white text-black px-4 py-1.5 rounded-full hover:bg-neutral-100 transition-colors">Sign up</Link>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -94,8 +108,10 @@ function Navbar() {
   )
 }
 
+
 /* ─── HERO ────────────────────────────────────────────────────────────────── */
 function Hero() {
+  const { user } = useAuth()
   return (
     <section className="relative pt-[120px] pb-0 flex flex-col items-center overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" style={{backgroundImage:'linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px)',backgroundSize:'48px 48px'}} />
@@ -119,8 +135,8 @@ function Hero() {
 
       {/* CTAs */}
       <div className="relative z-10 mt-8 flex flex-wrap items-center justify-center gap-3">
-        <Link to="/signup" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black text-[13.5px] font-semibold hover:bg-neutral-100 transition-colors shadow-lg">
-          Get started <ArrowRight size={13} />
+        <Link to={user ? "/dashboard" : "/signup"} className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black text-[13.5px] font-semibold hover:bg-neutral-100 transition-colors shadow-lg">
+          {user ? 'Go to Dashboard' : 'Get started'} <ArrowRight size={13} />
         </Link>
         <a href="#features" className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/[0.1] bg-white/[0.03] text-[13.5px] text-neutral-300 hover:bg-white/[0.07] hover:text-white transition-colors">
           Learn more
@@ -619,6 +635,7 @@ function DocsBlock(){
 
 /* ─── CTA ─────────────────────────────────────────────────────────────────── */
 function Cta(){
+  const { user } = useAuth()
   return (
     <section className="border-t border-white/[0.05] py-28 px-5">
       <div className="max-w-[700px] mx-auto text-center">
@@ -627,8 +644,8 @@ function Cta(){
         </h2>
         <p className="text-neutral-500 text-[15px] leading-relaxed mb-8 max-w-[380px] mx-auto">Join the operators already using DishBoard to run tighter, faster kitchens.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link to="/signup" className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white text-black text-[14px] font-semibold hover:bg-neutral-100 transition-colors shadow-xl shadow-white/10">
-            Get started <ArrowRight size={14} />
+          <Link to={user ? "/dashboard" : "/signup"} className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white text-black text-[14px] font-semibold hover:bg-neutral-100 transition-colors shadow-xl shadow-white/10">
+            {user ? 'Go to Dashboard' : 'Get started'} <ArrowRight size={14} />
           </Link>
           <a href="mailto:hello@dishboard.app" className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-white/[0.1] text-[14px] text-neutral-400 hover:bg-white/[0.05] hover:text-white transition-colors">
             Contact sales
@@ -638,6 +655,7 @@ function Cta(){
     </section>
   )
 }
+
 
 /* ─── FOOTER ──────────────────────────────────────────────────────────────── */
 function Footer(){

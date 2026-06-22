@@ -5,8 +5,17 @@ import { supabase } from '../api/supabaseClient';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Initialize user state from localStorage for persistent sessions
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('user');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  // If we already have a persistent user in localStorage, don't show the initial loading page
+  const [loading, setLoading] = useState(() => {
+    const saved = localStorage.getItem('user');
+    return !saved;
+  });
 
   const bridgeSupabaseToBackend = async (sbUser) => {
     const email = sbUser.email;
@@ -34,21 +43,27 @@ export const AuthProvider = ({ children }) => {
           try {
             const backendRes = await getMe();
             setUser(backendRes.user);
+            localStorage.setItem('user', JSON.stringify(backendRes.user));
           } catch (err) {
             const bUser = await bridgeSupabaseToBackend(session.user);
             setUser(bUser);
+            localStorage.setItem('user', JSON.stringify(bUser));
           }
         } else {
           try {
             const backendRes = await getMe();
             setUser(backendRes.user);
+            localStorage.setItem('user', JSON.stringify(backendRes.user));
           } catch (err) {
+            // Clean up localStorage session if backend cookie is invalid/expired
             setUser(null);
+            localStorage.removeItem('user');
           }
         }
       } catch (error) {
         console.error('Error during auth initialization:', error);
         setUser(null);
+        localStorage.removeItem('user');
       } finally {
         setLoading(false);
       }
@@ -62,6 +77,7 @@ export const AuthProvider = ({ children }) => {
         try {
           const bUser = await bridgeSupabaseToBackend(session.user);
           setUser(bUser);
+          localStorage.setItem('user', JSON.stringify(bUser));
         } catch (err) {
           console.error('Bridging after sign in state change failed:', err);
         } finally {
@@ -74,6 +90,7 @@ export const AuthProvider = ({ children }) => {
           // Ignore backend logout failure
         }
         setUser(null);
+        localStorage.removeItem('user');
       }
     });
 
@@ -87,9 +104,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await loginUser(email, password);
       setUser(res.user);
+      localStorage.setItem('user', JSON.stringify(res.user));
       return res.user;
     } catch (error) {
       setUser(null);
+      localStorage.removeItem('user');
       throw error;
     } finally {
       setLoading(false);
@@ -102,9 +121,11 @@ export const AuthProvider = ({ children }) => {
       await registerUser(email, password);
       const res = await loginUser(email, password);
       setUser(res.user);
+      localStorage.setItem('user', JSON.stringify(res.user));
       return res.user;
     } catch (error) {
       setUser(null);
+      localStorage.removeItem('user');
       throw error;
     } finally {
       setLoading(false);
@@ -139,6 +160,7 @@ export const AuthProvider = ({ children }) => {
       console.error('Error during logout:', error);
     } finally {
       setUser(null);
+      localStorage.removeItem('user');
       setLoading(false);
     }
   };
